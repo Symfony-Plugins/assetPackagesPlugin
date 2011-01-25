@@ -1,0 +1,45 @@
+#
+# Here's a config sample
+# 
+#  packages:
+#  
+#   layout:
+#     stylesheets: common           # loads /css/common.css
+#  
+#   jquery:
+#     javascripts: jquery           # loads /js/jquery.js
+#  
+#   form:
+#     stylesheets: form             # loads /css/form.css
+#  
+#   foopage:
+#     require:
+#       - layout
+#       - jquery
+#       - form
+#     stylesheets:
+#       - foo: ~                    # loads /css/foo.css
+#       - foo-print: {media: print} # loads /css/foo-print.css with the "print" media
+#       - foo-ie: {condition: IE6}  # loads /css/foo-ie.css wrap with <!--[if IE6]>...<![endif]-->
+#     javascripts: form-contact
+# 
+
+
+
+#
+# Asset options cheatsheet
+# 
+# Css options cheatsheet:
+#   - position ("first" or "last"): Move the asset call at the beginning/end of the list
+#   - condition (any condition):    string inserted the condition tag wrapper. Eg: `{condition: "lge IE9"}` will render `<!--[if lge IE9]>`
+#   - absolute (true):              The stylesheet path called will be absolute
+#   - raw_name (true):              Symfony won’t try to complete the filename
+#   - href (any path):              Skip the symfony stylesheet path resolver
+#   - media ("all", "sreen",..)     A stylesheet can have several media. Eg: `{media: "screen print"}`
+# 
+# Js options cheatsheet:
+#   - position ("first" or "last"): Move the asset call at the beginning/end of the list
+#   - condition (any condition):    string inserted the condition tag wrapper. Eg: `{condition: "lge IE9"}` will render `<!--[if lge IE9]>`
+#   - absolute (true):              The javascript path called will be absolute
+#   - raw_name (true):              Symfony won’t try to complete the filename
+#   - src (any path):               Skip the symfony javascript path resolver

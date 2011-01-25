@@ -1,0 +1,245 @@
+# assetPackagesPlugin #
+
+The `assetPackagesPlugin` is a symfony plugin that provides you the ability to group
+stylesheet and javascript calls into packages that you can easily organise through a simple
+`yaml` config file.
+
+The plugin developpement is driven by two rules:
+
+  * The logic and the configuration file should be simple enought for integrators
+  * The plugin implementation should be rock solid, with a full test suite
+
+A logic chain of packages can be automatically called through a simple package depency system.
+
+## Installation ##
+
+  * Install the plugin (via a package)
+
+        symfony plugin:install assetPackagesPlugin
+
+  * Install the plugin (via a Subversion checkout)
+
+        svn co http://svn.symfony-project.com/plugins/assetPackagesPlugin/trunk plugins/assetPackagesPlugin
+
+  * Activate the plugin in the `config/ProjectConfiguration.class.php`
+
+        [php]
+        class ProjectConfiguration extends sfProjectConfiguration
+        {
+          public function setup()
+          {
+            $this->enablePlugins(array(
+              'sfDoctrinePlugin', 
+              'assetPackagesPlugin',
+              '...',
+            ));
+          }
+        }
+
+  * Copy the `plugins/assetPackagesPlugin/config/asset-packages.yml` file in the `projetPath/config` directory.
+
+## Packages declaration ##
+
+Edit the `asset-packages.yml` file in the `projectPath/config` directory.
+
+
+    [yml]
+    packages:
+    
+      foo:              # the package name
+        require:
+          - bar         # the bar package styles and scripts will be automatically called
+        stylesheets:
+          - foostylesheet1     # calls /css/foostylesheet1.css
+          - foostylesheet2     # calls /css/foostylesheet2.css
+        javascripts: fooscript # calls /js/fooscript.js
+      
+      bar:
+        stylesheets:
+          - barstylesheet1     # calls /css/barstylesheet1.css
+        javascripts: myscript  # calls /js/myscript.js
+
+More options are available for script and stylesheet calls ; see the config sample at the end of this page.
+
+## Package call ##
+
+### Call from a template ###
+
+It's the most common use for package calls.
+
+Inside your template file, load the `AssetPackages` helper and call the `use_package()`
+function:
+
+    [php]
+    <?php use_helper('AssetPackages') ?>
+    <?php use_package('foo') ?>
+    
+    <p>the template html...</p>
+
+You can also call several packages at once:
+
+    [php]
+    <?php use_package(array('foo', 'bar')) ?>
+
+You can call packages from templates, partials or component.   
+But be carefull with the caching, no php will be run (and no package will be loaded)
+in a cached partial/component.
+
+### Call from an action ###
+
+Use the `response->addPackage()` method:
+
+    [php]
+    public function executeIndex(sfWebRequest $request)
+    {
+      $this->response->addPackage('foo');
+    }
+
+## The plugin comes with a debug panel ##
+
+![The assetPackagesPlugin debug panel](http://img814.imageshack.us/img814/6248/asssetpackagespanel.png)
+
+## Link a package to a form or a widget ##
+
+### Link a package to a widget ###
+
+Once a package is linked to a widget declaration, related assets are automatically called
+when the widget is rendered with all packages added with the "require" option.
+
+Usage samples:
+
+  * a phone field with a dedicated stylesheet
+  * a password field with a js+css plugin that displays the prompted password strength to the user
+
+You can add your packages to your form widegts through the "packages" option.
+
+If you build your own form widget class:
+
+    [php]
+    class myWidgetForm extends sfWidgetForm
+    {
+      protected function configure($options = array(), $attributes = array())
+      {
+        parent::configure($options, $attributes);
+        $this->addOption('packages', 'foo');
+      }
+    }
+
+If you use an existing widget class:
+
+    [php]
+    class myForm extends BaseForm
+    {
+      public function configure()
+      {
+        // ...
+        // ...
+        // ...
+        $this->widgetSchema['field_name']->addOption('packages', 'foo');
+      }
+    }
+
+### Link a package to a form ###
+
+Use the `sfForm->addPackage()` method:
+
+    [php]
+    class myForm extends sfForm
+    {
+      public function configure()
+      {
+        $this->addPackage('foo');
+      }
+    }
+
+## Call packages linked to a form ##
+
+Call `use_packages_for_form()` in the template where the form is rendered.
+
+    [php]
+    <?php use_stylesheets_for_form($form) ?>
+    <?php use_javascripts_for_form($form) ?>
+    <?php use_helper('AssetPackages') ?>
+    <?php use_packages_for_form($form) ?>
+    
+    <form action="<?php echo url_for('@form_handler_route') ?>" method="post">
+      <table>
+        <?php echo $form ?>
+      </table>
+      <p><input type="submit" value="Submit" /></p>
+    </form>
+
+>**SIDEBAR**
+>Stylesheets and javascripts form support in symfony
+
+>If you're familiar with the symfony form system, you might already know that stylesheets
+and javascripts can already be linked to widgets and forms in symfony.
+>
+>As this feature isn’t documented in symfony books, here's the phpDoc documentation:
+>
+>  * [`sfWidget->getStylesheets()`](http://www.symfony-project.org/api/1_4/sfWidget#method_getstylesheets)
+>  * [`sfWidget->getJavascripts()`](http://www.symfony-project.org/api/1_4/sfWidget#method_getjavascripts)
+>  * [`sfWidgetFormSchema->getStylesheets()`](http://www.symfony-project.org/api/1_4/sfWidgetFormSchema#method_getstylesheets)
+>  * [`sfWidgetFormSchema->getJavascripts()`](http://www.symfony-project.org/api/1_4/sfWidgetFormSchema#method_getjavascripts)
+>  * [`sfForm->getStylesheets()`](http://www.symfony-project.org/api/1_4/sfForm#method_getstylesheets)
+>  * [`sfForm->getJavascripts()`](http://www.symfony-project.org/api/1_4/sfForm#method_getjavascripts)
+>  * [`use_stylesheets_for_form()`](http://trac.symfony-project.org/browser/branches/1.4/lib/helper/AssetHelper.php#L701)
+>  * [`use_javascripts_for_form()`](http://trac.symfony-project.org/browser/branches/1.4/lib/helper/AssetHelper.php#L647)
+>
+>
+>It works great, I've used it for a long time. But the dependency/autoloading feature of assetPackagingPlugin can make your life really simplier.
+
+&nbsp;
+
+>**TIP**
+>PS: Hey symfony developpers! I'm still looking for a way to add a `->addPackage()` method to all widgets, but unfortunatly, sfWidget extends no BaseWideget class and no 'widget.method_not_found' event is notified. I'm stuck. Any idea?
+
+## [INTEGRATOR CHEATSHEET] Package declaration config file:##
+
+
+`projectPath/config/asset-packages.yml`
+
+    [yml]
+    packages:
+    
+      layout:
+        stylesheets: common           # loads /css/common.css
+    
+      jquery:
+        javascripts: jquery           # loads /js/jquery.js
+    
+      form:
+        stylesheets: form             # loads /css/form.css
+    
+      foopage:
+        require:
+          - layout
+          - jquery
+          - form
+        stylesheets:
+          - foo: ~                    # loads /css/foo.css
+          - foo-print: {media: print} # loads /css/foo-print.css with the "print" media
+          - foo-ie: {condition: IE6}  # loads /css/foo-ie.css wrap with <!--[if IE6]>...<![endif]-->
+        javascripts: form-contact
+
+
+The [yaml syntax documentation](http://components.symfony-project.org/yaml/trunk/book/02-YAML).
+
+ **CSS options**         | Supported values                 | Comments
+--------------------     | -------------------------------- | ----------
+ **position**            | "first" or "last"                | Move the asset call at the beginning/end of the list
+ **condition**           | any condition                    | string inserted the condition tag wrapper. Eg: `{condition: "lge IE9"}` will render `<!--[if lge IE9]>`
+ **absolute**            | true                             | The file path called shoud be absolute
+ **raw_name**            | true                             | Symfony won’t try to complete the filename
+ **href**                | any absolute or relative path    | Skip the symfony asset path generator
+ **media**               | "all", "sreen", "print"...       | 
+
+
+
+  **JS options**          | Supported values                 | Comments
+ --------------------     | -------------------------------- | ----------
+  **position**            | "first" or "last"                | Move the asset call at the beginning/end of the list
+  **condition**           | any condition                    | string inserted the condition tag wrapper. Eg: `{condition: "lge IE9"}` will render `<!--[if lge IE9]>`
+  **absolute**            | true                             | The file path called shoud be absolute
+  **raw_name**            | true                             | Symfony won’t try to complete the filename
+  **src**                 | any absolute or relative path    | Skip the symfony asset path generator

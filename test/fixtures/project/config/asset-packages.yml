@@ -1,0 +1,23 @@
+packages:
+  foo:
+    require: bar
+    stylesheets:
+      stylefoo1: ~
+      stylefoo2: {position: first, media: print}
+    javascripts:
+      scriptfoo1: {position: first, condition: IE}
+  bar:
+    stylesheets: stylebar
+    javascripts: scriptbar
+  baz:
+    stylesheets: stylebaz
+    javascripts: scriptbaz
+  form-myuser:
+    stylesheets: myuser
+    javascripts: myuser
+  widget-firstname:
+    stylesheets: stylefirstname
+    javascripts: scriptfirstname
+  widget-phonetype:
+    stylesheets: phone
+    javascripts: phone

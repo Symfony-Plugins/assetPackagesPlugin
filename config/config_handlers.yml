@@ -1,0 +1,2 @@
+"config/asset-packages.yml":
+  class: sfSimpleYamlConfigHandler
