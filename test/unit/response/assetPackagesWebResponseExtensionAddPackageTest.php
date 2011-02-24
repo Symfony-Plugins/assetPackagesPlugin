@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__).'/../../bootstrap/unit.php';
 
-$t = new lime_test(11, new lime_output_color());
+$t = new lime_test(14, new lime_output_color());
 
 
 $t->comment('::addPackage()');
@@ -24,16 +24,38 @@ catch (Exception $e)
   $t->pass('::addPackage() throws an exception when package is unknown');
 }
 assetPackagesWebResponseExtension::addPackage($response, 'foo');
-$stylesheets = $response->getStylesheets();
-$javascripts = $response->getJavascripts();
-$t->ok(
-  in_array('bar', array_keys($stylesheets))
-  && in_array('baz', array_keys($javascripts)),
+$t->is_deeply(
+  $response->getStylesheets(),
+  array('bar' => array()),
   '::addPackage() add package stylesheets and javascripts to response'
+);
+$t->is_deeply(
+  $response->getJavascripts(),
+  array('baz' => array()),
+  '::addPackage() add package javascripts and javascripts to response'
 );
 $t->ok(
   in_array('foo', assetPackagesWebResponseExtension::getRequestedPackages($response)),
   '::addPackage() add the package to the response RequestedPackages list'
+);
+$packages = array(
+  'foo' => array(
+    'stylesheets' => array(0 => 'bar1', 1 => 'bar2',),
+    'javascripts' => array(0 => 'baz1', 1 => 'baz2',),
+),
+);
+$response = new sfWebResponse(new sfEventDispatcher);
+assetPackagesWebResponseExtension::setPackages($response, $packages);
+assetPackagesWebResponseExtension::addPackage($response, 'foo');
+$t->is_deeply(
+  $response->getStylesheets(),
+  array('bar1' => array(), 'bar2' => array()),
+  '::addPackage() add package stylesheets simple list to response'
+);
+$t->is_deeply(
+  $response->getJavascripts(),
+  array('baz1' => array(), 'baz2' => array()),
+  '::addPackage() add package javascript simple list to response'
 );
 $response = new sfWebResponse(new sfEventDispatcher);
 $packages = array(

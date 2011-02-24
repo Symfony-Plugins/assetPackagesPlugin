@@ -228,14 +228,7 @@ class assetPackagesWebResponseExtension
         // An array_map could be more elegant here
         foreach ($stylesheets as $name => $stylesheetConfig)
         {
-          if (is_array($stylesheetConfig))
-          {
-            self::addStylesheet($response, array($name => $stylesheetConfig));
-          }
-          else
-          {
-            self::addStylesheet($response, $name);
-          }
+          self::addStylesheet($response, array($name => $stylesheetConfig));
         }
       }
       else
