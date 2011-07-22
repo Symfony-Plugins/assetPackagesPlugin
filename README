@@ -217,9 +217,9 @@ and javascripts can already be linked to widgets and forms in symfony.
           - jquery
           - form
         stylesheets:
-          - foo: ~                    # loads /css/foo.css
-          - foo-print: {media: print} # loads /css/foo-print.css with the "print" media
-          - foo-ie: {condition: IE6}  # loads /css/foo-ie.css wrap with <!--[if IE6]>...<![endif]-->
+          foo: ~                    # loads /css/foo.css
+          foo-print: {media: print} # loads /css/foo-print.css with the "print" media
+          foo-ie: {condition: IE6}  # loads /css/foo-ie.css wrap with <!--[if IE6]>...<![endif]-->
         javascripts: form-contact
 
 
