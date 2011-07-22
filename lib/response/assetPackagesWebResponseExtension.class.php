@@ -273,7 +273,7 @@ class assetPackagesWebResponseExtension
       {
         $key = $stylesheet[$key];
       }
-      if (is_array($stylesheet[$key]))
+      else if (is_array($stylesheet[$key]))
       {
         $options = $stylesheet[$key];
         if (isset($options['position']))
@@ -296,7 +296,6 @@ class assetPackagesWebResponseExtension
    */
   static public function addJavascript(sfWebResponse $response, $javascript)
   {
-    
     $position = '';
     $key = $javascript;
     $options = array();
@@ -307,7 +306,7 @@ class assetPackagesWebResponseExtension
       {
         $key = $javascript[$key];
       }
-      if (is_array($javascript[$key]))
+      else if (is_array($javascript[$key]))
       {
         $options = $javascript[$key];
         if (isset($options['position']))
