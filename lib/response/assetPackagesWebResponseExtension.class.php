@@ -273,7 +273,7 @@ class assetPackagesWebResponseExtension
       {
         $key = $stylesheet[$key];
       }
-      else
+      if (is_array($stylesheet[$key]))
       {
         $options = $stylesheet[$key];
         if (isset($options['position']))
@@ -307,7 +307,7 @@ class assetPackagesWebResponseExtension
       {
         $key = $javascript[$key];
       }
-      else
+      if (is_array($javascript[$key]))
       {
         $options = $javascript[$key];
         if (isset($options['position']))
